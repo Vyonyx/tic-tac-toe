@@ -1,0 +1,28 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.gameboard {
+    --grid-size: 500px;
+    width: var(--grid-size);
+    height: var(--grid-size);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    justify-content: center;
+
+    gap: 2px;
+    background-color: black;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 5rem;
+}
+
+.gameboard div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: white;
+}

@@ -1,0 +1,22 @@
+Plan for tic-tac-toe game.
+
+You want a couple objects to handle the two players (factory functions), a game controller (module) and game board (module).
+
+Game Board:
+Generate a 3x3 grid.
+Allow population of player symbol into each grid.
+
+Players:
+Keep score.
+Grid selection/player move on legal grid.
+Track/choose marker if two player.
+
+AI Bot:
+minmax() algorithm.
+
+Game Controller:
+Control which player's turn it is.
+Games played.
+Determine winner.
+Decline grid selection if existing symbol.
+
