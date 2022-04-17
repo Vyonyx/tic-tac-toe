@@ -13,12 +13,16 @@
         <h1>TIC-TAC-TOE</h1>
     </div>
     <div class="content">
-        <div class="controls">
+        <div class="controls" style="display: flex">
+            <h3 class="modes">Play Modes:</h3>
             <button class="player-vs-player">Player vs. Player</button>
             <button class="player-vs-ai">Player vs. AI</button>
         </div>
-        <div class="gameboard"></div>
-        <h2 class="current-players">Player vs AI</h2>
+        <div class="game" style="display: none">
+            <div class="gameboard"></div>
+            <h2 class="game-mode"></h2>
+            <button class="select-new-mode">Chose new game mode.</button>
+        </div>
     </div>
     <div class="footer">
 

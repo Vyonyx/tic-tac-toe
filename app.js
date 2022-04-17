@@ -60,13 +60,38 @@ const player1 = Player('x');
 const player2 = Player('o');
 
 const gameController = (function () {
+    // Game controls.
+    const controls = document.querySelector('.controls');
+    const gameContainer = document.querySelector('.game');
+    const pvp_Button = document.querySelector('.player-vs-player');
+    const pvai_Button = document.querySelector('.player-vs-ai');
+    const gameModeText = document.querySelector('.game-mode');
+    const changeGameModeButton = document.querySelector('.select-new-mode');
+
+    // Display toggle funtions.
+    function toggleControls() {
+        controls.style.display = controls.style.display == 'flex' ? 'none' : 'flex';
+        gameContainer.style.display = gameContainer.style.display == 'none' ? 'flex' : 'none';
+    };
+
+    // Adding toggle functionality to control buttons.
+    pvp_Button.addEventListener('mousedown', () => {
+        toggleControls();
+        gameModeText.textContent = 'Player vs. Player';
+    });
+
+    pvai_Button.addEventListener('mousedown', () => {
+        toggleControls();
+        gameModeText.textContent = 'Player vs. AI';
+    });
+
+    changeGameModeButton.addEventListener('mousedown', () => {
+        toggleControls();
+    });
+
     const gameOn = true;
     const grid = gameBoard.gridState;
     const allTiles = document.querySelectorAll('.tile')
-    
-    // const evalGameState = () => {
-    //     console.log(grid);
-    // };
 
     window.addEventListener('click', function(e) {
         if (!gameOn) return
