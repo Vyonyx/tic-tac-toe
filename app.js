@@ -56,17 +56,34 @@ const Player = (z) => {
     }
 };
 
-const player1 = Player('t');
-const player2 = Player('y');
+const player1 = Player('x');
+const player2 = Player('o');
 
 const gameController = (function () {
     const gameOn = true;
+    const grid = gameBoard.gridState;
+    const allTiles = document.querySelectorAll('.tile')
+    
+    // const evalGameState = () => {
+    //     console.log(grid);
+    // };
+
     window.addEventListener('click', function(e) {
         if (!gameOn) return
         if (!e.target.classList.contains('tile')) return
 
+        let currentTilePos = e.target.dataset.gridpos
+
         if (player1.isTurn) {
             e.target.textContent = player1.mark;
+            gameBoard.gridState[currentTilePos[0]][currentTilePos[2]] = player1.mark;
+            player1.isTurn = false;
+            player2.isTurn - true;
+        } else {
+            e.target.textContent = player2.mark;
+            gameBoard.gridState[currentTilePos[0]][currentTilePos[2]] = player2.mark;
+            player1.isTurn = true;
+            player2.isTurn - false;
         };
     });
 
