@@ -12,13 +12,18 @@ const gameBoard = (function () {
         return newTile
     }
 
-    // Populate the starting state of the game board.
-    const gameReset = () => {
-        gridState = [
+    const resetGridState = () => {
+        return [
             ['', '', ''],
             ['', '', ''],
             ['', '', ''],
         ];
+    };
+
+    // Populate the starting state of the game board.
+    function gameReset() {
+
+        gridState = resetGridState();
 
         for (i = 0; i < 3; i++) {
             for (j = 0; j < 3; j++) {
@@ -28,6 +33,22 @@ const gameBoard = (function () {
             }
         }
     }
+
+    const getAvailableTiles = () => {
+        const availableTiles = []
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                if (gridState[i][j] == '') {
+                    availableTiles.push(`${i}-${j}`);
+                }
+            }
+        }
+        return availableTiles
+    };
+
+    const checkForWin = (symbol) => {
+        return gridState.some((moves) => moves.every((move) => move === symbol));
+    };
 
     // Refresh the grid to reflect new game state.
     const updateGrid = () => {
@@ -43,7 +64,10 @@ const gameBoard = (function () {
 
     return {
         gridState,
-        updateGrid
+        resetGridState,
+        updateGrid,
+        getAvailableTiles,
+        checkForWin
     }
 })();
 
@@ -59,6 +83,7 @@ const Player = (z) => {
 const player1 = Player('x');
 const player2 = Player('o');
 
+
 const gameController = (function () {
     // Game controls.
     const controls = document.querySelector('.controls');
@@ -68,38 +93,75 @@ const gameController = (function () {
     const gameModeText = document.querySelector('.game-mode');
     const changeGameModeButton = document.querySelector('.select-new-mode');
 
+    let playMode = '';
+
+    // Game event below.
+    let gameOn = true;
+    const grid = gameBoard.gridState;
+    const allTiles = document.querySelectorAll('.tile')
+
     // Display toggle funtions.
     function toggleControls() {
         controls.style.display = controls.style.display == 'flex' ? 'none' : 'flex';
         gameContainer.style.display = gameContainer.style.display == 'none' ? 'flex' : 'none';
     };
 
+    function currentPlayMode(players, pMode) {
+        gameOn = true;
+        gameModeText.textContent = players;
+        playMode = pMode;
+    }
+
     // Adding toggle functionality to control buttons.
     pvp_Button.addEventListener('mousedown', () => {
         toggleControls();
-        gameModeText.textContent = 'Player vs. Player';
+        currentPlayMode('Player vs. Player', 'pvp');
     });
 
     pvai_Button.addEventListener('mousedown', () => {
         toggleControls();
-        gameModeText.textContent = 'Player vs. AI';
+        currentPlayMode('Player vs. AI', 'pvai');
     });
 
     changeGameModeButton.addEventListener('mousedown', () => {
         toggleControls();
+        gameBoard.gridState = gameBoard.resetGridState();
+        const allTiles = document.querySelectorAll('.tile');
+        allTiles.forEach(tile => {
+            tile.textContent = '';
+        });
     });
 
-    const gameOn = true;
-    const grid = gameBoard.gridState;
-    const allTiles = document.querySelectorAll('.tile')
+    // Game win alert.
+    function winnerIs(name) {
+        alert(`The winner is: ${name}!`)
+    }
+
+    function assessWinner() {
+        const player1Win = gameBoard.checkForWin(player1.mark);
+        const player2Win = gameBoard.checkForWin(player2.mark);
+        if (player1Win) {
+            winnerIs('Player 1');
+            gameOn = false;
+        }
+        if (player2Win) {
+            winnerIs('Player 2');
+            gameOn = false;
+        }
+    }
 
     window.addEventListener('click', function(e) {
         if (!gameOn) return
         if (!e.target.classList.contains('tile')) return
 
         let currentTilePos = e.target.dataset.gridpos
+        let availableTiles = gameBoard.getAvailableTiles();
+        if (!(availableTiles.includes(currentTilePos))) {
+            return
+        }
 
-        if (player1.isTurn) {
+        if (playMode == 'pvp') {
+            if (player1.isTurn) {
             e.target.textContent = player1.mark;
             gameBoard.gridState[currentTilePos[0]][currentTilePos[2]] = player1.mark;
             player1.isTurn = false;
@@ -109,7 +171,26 @@ const gameController = (function () {
             gameBoard.gridState[currentTilePos[0]][currentTilePos[2]] = player2.mark;
             player1.isTurn = true;
             player2.isTurn - false;
-        };
-    });
+        }
+        assessWinner();
+    };
 
+    if (playMode == 'pvai') {
+
+        e.target.textContent = player1.mark;
+        gameBoard.gridState[currentTilePos[0]][currentTilePos[2]] = player1.mark;
+
+        const randomSelection = Math.floor(Math.random() * availableTiles.length);
+        const aiSelection = availableTiles[randomSelection];
+        const aiTile = document.querySelector(`[data-gridpos="${aiSelection}"]`);
+        aiTile.textContent = player2.mark;
+        gameBoard.gridState[aiSelection[0]][aiSelection[2]] = player2.mark;
+        availableTiles = gameBoard.getAvailableTiles();
+
+        assessWinner();
+    }
+    });
+    return {
+        playMode
+    }
 })();
