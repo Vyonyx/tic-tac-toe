@@ -93,12 +93,11 @@ const gameController = (function () {
     const gameModeText = document.querySelector('.game-mode');
     const changeGameModeButton = document.querySelector('.select-new-mode');
 
-    let playMode = '';
-
     // Game event below.
     let gameOn = true;
     const grid = gameBoard.gridState;
-    const allTiles = document.querySelectorAll('.tile')
+    const allTiles = document.querySelectorAll('.tile');
+    let playMode = '';
 
     // Display toggle funtions.
     function toggleControls() {
@@ -106,7 +105,7 @@ const gameController = (function () {
         gameContainer.style.display = gameContainer.style.display == 'none' ? 'flex' : 'none';
     };
 
-    function currentPlayMode(players, pMode) {
+    const currentPlayMode = (players, pMode) =>  {
         gameOn = true;
         gameModeText.textContent = players;
         playMode = pMode;
@@ -154,7 +153,7 @@ const gameController = (function () {
         if (!gameOn) return
         if (!e.target.classList.contains('tile')) return
 
-        let currentTilePos = e.target.dataset.gridpos
+        let currentTilePos = e.target.dataset.gridpos;
         let availableTiles = gameBoard.getAvailableTiles();
         if (!(availableTiles.includes(currentTilePos))) {
             return
@@ -191,6 +190,7 @@ const gameController = (function () {
     }
     });
     return {
-        playMode
+        playMode,
+        gameOn
     }
 })();
