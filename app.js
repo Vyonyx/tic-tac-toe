@@ -1,15 +1,16 @@
-let circleTurn
-const xClass = 'x'
-const circleClass = 'circle'
+const menu = document.querySelector('.menu')
+const board = document.querySelector('.board')
+const gridCells = document.querySelectorAll('.cell')
+const pvpButton = document.getElementById('playervsplayer')
+const pvaiButton = document.getElementById('playervsai')
+const gameMessage = document.getElementById('gameMessage')
 
-const board = document.getElementById('board')
-const cellElements = document.querySelectorAll('[data-cell]')
-const restartButton = document.getElementById('restart')
+const xTurn = 'xTurn'
+const oTurn = 'oTurn'
+const xClass = 'X'
+const oClass = 'O'
 
-const winningMessageTextElement = document.querySelector('[data-winning-message-text]')
-const winningMessageElement = document.getElementById('winningMessage')
-
-const WINNING_COMBINATIONS = [
+const winningMoves = [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
@@ -20,73 +21,93 @@ const WINNING_COMBINATIONS = [
     [2, 4, 6]
 ]
 
-startGame()
+let gameMode
 
-restartButton.addEventListener('click', startGame)
+pvpButton.addEventListener('click', () => {
+    startGame()
+    gameMode = 'pvp'
+    toggleMenuView()
+})
+
+pvaiButton.addEventListener('click', () => {
+    startGame()
+    gameMode = 'pvai'
+    toggleMenuView()
+})
+
+function toggleMenuView() {
+    menu.classList.remove('show')
+}
 
 function startGame() {
-    circleTurn = false
-    cellElements.forEach(cell => {
+    gridCells.forEach(cell => {
+        cell.innerText = ''
         cell.classList.remove(xClass)
-        cell.classList.remove(circleClass)
-        cell.removeEventListener('click', handleClick)
-        cell.addEventListener('click', handleClick, {once:true})
+        cell.classList.remove(oClass)
+        gameMode = ''
+        cell.removeEventListener('click', clickHandler)
+        cell.addEventListener('click', clickHandler, { once: true })
+        board.classList.remove(xTurn)
+        board.classList.remove(oTurn)
+        board.classList.add(xTurn)
     })
-    setBoardHoverClass()
-    winningMessageElement.classList.remove('show')
 }
 
-function handleClick(e) {
-    const cell = e.target
-    const currentClass = circleTurn ? circleClass : xClass
-    placeMark(cell, currentClass)
-    if (checkWin(currentClass)) {
-        endGame(false)
-    } else if (isDraw()) {
-        endGame(true)
-    } else {
-        swapTurn()
-        setBoardHoverClass()
+function clickHandler(e) {
+    const currentCell = e.target
+    let currentClass
+    if (gameMode == 'pvp') {
+        currentClass = board.classList.contains(xTurn) ? xClass : oClass
+        console.log(currentClass)
+        currentCell.innerText = board.classList.contains(xTurn) ? 'X' : 'O'
+        currentCell.classList.add(board.classList.contains(xTurn) ? xClass : oClass)
+        switchTurns()
+    }   else if (gameMode == 'pvai') {
+        currentCell.innerText = 'X'
+        currentCell.classList.add(xClass)
+        currentClass = xClass
+        randomAIMove(currentClass)
+    }
+    if (checkForWin(currentClass)) {
+        gameMessage.innerText = `${currentClass == xClass ? 'X' : 'O'} Wins!`
+        menu.classList.add('show')
+    } else if (checkForDraw()) {
+        gameMessage.innerText = 'Draw!'
+        menu.classList.add('show')
     }
 }
 
-function placeMark (cell, currentClass) {
-    cell.classList.add(currentClass)
-}
-
-function swapTurn () {
-    circleTurn = !circleTurn
-}
-
-function setBoardHoverClass() {
-    board.classList.remove(xClass)
-    board.classList.remove(circleClass)
-    if (circleTurn) {
-        board.classList.add(circleClass)
-    } else {
-        board.classList.add(xClass)
-    }
-}
-
-function checkWin(currentClass) {
-    return WINNING_COMBINATIONS.some(combination => {
+function checkForWin(currentClass) {
+    return winningMoves.some(combination => {
         return combination.every(index => {
-            return cellElements[index].classList.contains(currentClass)
+            return gridCells[index].classList.contains(currentClass)
         })
     })
 }
 
-function endGame(draw) {
-    if (draw) {
-        winningMessageTextElement.innerText = 'Draw!'
-    } else {
-        winningMessageTextElement.innerText = `${circleTurn ? "O's" : "X's"} Win!`
-    }
-    winningMessageElement.classList.add('show')
+function checkForDraw() {
+    return [...gridCells].every(cell => {
+        return cell.classList.contains(xClass) || cell.classList.contains(oClass)
+    })
 }
 
-function isDraw() {
-    return [...cellElements].every(cell => {
-        return cell.classList.contains(xClass) || cell.classList.contains(circleClass)
+function randomAIMove(currentClass) {
+    const availableMoves = [...gridCells].filter(cell => {
+        return cell.classList.length == 1
     })
+    if (availableMoves.length == 0) return
+    const index = Math.floor(Math.random() * availableMoves.length)
+    availableMoves[index].innerText = 'O'
+    availableMoves[index].classList.add('O')
+    currentClass = oClass
+}
+
+function switchTurns() {
+    if (board.classList.contains(xTurn)) {
+        board.classList.remove(xTurn)
+        board.classList.add(oTurn)
+    } else {
+        board.classList.remove(oTurn)
+        board.classList.add(xTurn)
+    }
 }

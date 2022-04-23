@@ -4,25 +4,32 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <title>Tic Tac Toe</title>
     <script src="app.js" defer></script>
-    <title>Tic-Tac_Toe</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="board" id="board">
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
+
+    <div class="menu show" id="menu">
+        <h3>Choose game mode:</h3>
+        <button id="playervsplayer">Player vs. Player</button>
+        <button id="playervsai">Player vs. AI</button>
+        <h1 id="gameMessage"></h1>
     </div>
-    <div class="winning-message" id="winningMessage">
-        <div data-winning-message-text></div>
-        <button id="restart">Restart</button>
+
+    <div class="content" id="content">
+        <h1>Tic Tac Toe</h1>
+        <div class="board xTurn">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
     </div>
 </body>
 </html>
